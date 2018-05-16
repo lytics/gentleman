@@ -232,12 +232,12 @@ func TestClientAddCookies(t *testing.T) {
 	utils.Equal(t, cli.Context.Request.Header.Get("Cookie"), "foo=bar")
 }
 
-func TestClientCookieJar(t *testing.T) {
-	cli := New()
-	cli.CookieJar()
-	cli.Middleware.Run("request", cli.Context)
-	utils.NotEqual(t, cli.Context.Client.Jar, nil)
-}
+// func TestClientCookieJar(t *testing.T) {
+// 	cli := New()
+// 	cli.CookieJar()
+// 	cli.Middleware.Run("request", cli.Context)
+// 	utils.NotEqual(t, cli.Context.Client.Jar, nil)
+// }
 
 func TestClientVerbMethods(t *testing.T) {
 	cli := New()

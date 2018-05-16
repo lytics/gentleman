@@ -417,12 +417,12 @@ func TestRequestAddCookies(t *testing.T) {
 	utils.Equal(t, req.Context.Request.Header.Get("Cookie"), "foo=bar")
 }
 
-func TestRequestCookieJar(t *testing.T) {
-	req := NewRequest()
-	req.CookieJar()
-	req.Middleware.Run("request", req.Context)
-	utils.NotEqual(t, req.Context.Client.Jar, nil)
-}
+// func TestRequestCookieJar(t *testing.T) {
+// 	req := NewRequest()
+// 	req.CookieJar()
+// 	req.Middleware.Run("request", req.Context)
+// 	utils.NotEqual(t, req.Context.Client.Jar, nil)
+// }
 
 func TestRequestType(t *testing.T) {
 	req := NewRequest()
