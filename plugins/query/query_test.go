@@ -1,6 +1,7 @@
 package query
 
 import (
+	"net/url"
 	"testing"
 
 	"github.com/lytics/gentleman/context"
@@ -51,7 +52,8 @@ func TestQuerySetMap(t *testing.T) {
 	ctx := context.New()
 	ctx.Request.URL.RawQuery = "baz=foo&foo=foo"
 	fn := newHandler()
-	params := map[string]string{"foo": "bar"}
+	params := url.Values{}
+	params.Set("foo", "bar")
 
 	SetMap(params).Exec("request", ctx, fn.fn)
 	utils.Equal(t, fn.called, true)

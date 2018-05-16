@@ -373,7 +373,9 @@ func TestRequestAddQuery(t *testing.T) {
 
 func TestRequestSetQueryParams(t *testing.T) {
 	req := NewRequest()
-	req.SetQueryParams(map[string]string{"foo": "bar"})
+	param := url.Values{}
+	param.Set("foo", "bar")
+	req.SetQueryParams(param)
 	req.Middleware.Run("request", req.Context)
 	utils.Equal(t, req.Context.Request.URL.RawQuery, "foo=bar")
 }

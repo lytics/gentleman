@@ -1,11 +1,12 @@
 package url
 
 import (
-	c "github.com/lytics/gentleman/context"
-	p "github.com/lytics/gentleman/plugin"
 	"net/url"
 	"regexp"
 	"strings"
+
+	c "github.com/lytics/gentleman/context"
+	p "github.com/lytics/gentleman/plugin"
 )
 
 // URL parses and defines a new URL in the outgoing request

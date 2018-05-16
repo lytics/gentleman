@@ -31,7 +31,7 @@ func New() *Mux {
 	return m
 }
 
-// Match matches the give Context againts a list of matchers and
+// Match matches the give Context against a list of matchers and
 // returns `true` if all the matchers passed.
 func (m *Mux) Match(ctx *c.Context) bool {
 	for _, matcher := range m.Matchers {

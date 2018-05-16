@@ -5,6 +5,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/lytics/gentleman/context"
@@ -19,7 +20,7 @@ import (
 	"github.com/lytics/gentleman/plugins/headers"
 	"github.com/lytics/gentleman/plugins/multipart"
 	"github.com/lytics/gentleman/plugins/query"
-	"github.com/lytics/gentleman/plugins/url"
+	u "github.com/lytics/gentleman/plugins/url"
 )
 
 const (
@@ -107,37 +108,37 @@ func (r *Request) Method(method string) *Request {
 
 // URL parses and defines the URL to be used in the outgoing request.
 func (r *Request) URL(uri string) *Request {
-	r.Use(url.URL(uri))
+	r.Use(u.URL(uri))
 	return r
 }
 
 // BaseURL parses the given URL and uses the URL schema and host in the outgoing request.
 func (r *Request) BaseURL(uri string) *Request {
-	r.Use(url.BaseURL(uri))
+	r.Use(u.BaseURL(uri))
 	return r
 }
 
 // Path defines the request URL path to be used in the outgoing request.
 func (r *Request) Path(path string) *Request {
-	r.Use(url.Path(path))
+	r.Use(u.Path(path))
 	return r
 }
 
 // AddPath defines the request URL path to be used in the outgoing request.
 func (r *Request) AddPath(path string) *Request {
-	r.Use(url.AddPath(path))
+	r.Use(u.AddPath(path))
 	return r
 }
 
 // Param replaces a path param based on the given param name and value.
 func (r *Request) Param(name, value string) *Request {
-	r.Use(url.Param(name, value))
+	r.Use(u.Param(name, value))
 	return r
 }
 
 // Params replaces path params based on the given params key-value map.
 func (r *Request) Params(params map[string]string) *Request {
-	r.Use(url.Params(params))
+	r.Use(u.Params(params))
 	return r
 }
 
@@ -156,7 +157,7 @@ func (r *Request) AddQuery(name, value string) *Request {
 }
 
 // SetQueryParams sets URL query params based on the given map.
-func (r *Request) SetQueryParams(params map[string]string) *Request {
+func (r *Request) SetQueryParams(params url.Values) *Request {
 	r.Use(query.SetMap(params))
 	return r
 }

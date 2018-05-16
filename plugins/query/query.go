@@ -1,6 +1,8 @@
 package query
 
 import (
+	"net/url"
+
 	c "github.com/lytics/gentleman/context"
 	p "github.com/lytics/gentleman/plugin"
 )
@@ -46,11 +48,13 @@ func DelAll() p.Plugin {
 }
 
 // SetMap sets a map of query params by key-value pair.
-func SetMap(params map[string]string) p.Plugin {
+func SetMap(params url.Values) p.Plugin {
 	return p.NewRequestPlugin(func(ctx *c.Context, h c.Handler) {
 		query := ctx.Request.URL.Query()
-		for k, v := range params {
-			query.Set(k, v)
+		for key, values := range params {
+			for _, v := range values {
+				query.Set(key, v)
+			}
 		}
 		ctx.Request.URL.RawQuery = query.Encode()
 		h.Next(ctx)
