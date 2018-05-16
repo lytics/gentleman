@@ -4,9 +4,12 @@ package retrier
 type Action int
 
 const (
-	Succeed Action = iota // Succeed indicates the Retrier should treat this value as a success.
-	Fail                  // Fail indicates the Retrier should treat this value as a hard failure and not retry.
-	Retry                 // Retry indicates the Retrier should treat this value as a soft failure and retry.
+	// Succeed indicates the Retrier should treat this value as a success.
+	Succeed Action = iota
+	// Fail indicates the Retrier should treat this value as a hard failure and not retry.
+	Fail
+	// Retry indicates the Retrier should treat this value as a soft failure and retry.
+	Retry
 )
 
 // Classifier is the interface implemented by anything that can classify Errors for a Retrier.
