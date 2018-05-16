@@ -11,8 +11,8 @@ import (
 	"net/http"
 	"os"
 
-	"gopkg.in/h2non/gentleman.v2/context"
-	"gopkg.in/h2non/gentleman.v2/utils"
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/utils"
 )
 
 // Response provides a more convenient and higher level Response struct.

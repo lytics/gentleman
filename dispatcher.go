@@ -1,7 +1,7 @@
 package gentleman
 
 import (
-	c "gopkg.in/h2non/gentleman.v2/context"
+	c "github.com/lytics/gentleman/context"
 )
 
 // Dispatcher dispatches a given request triggering the middleware

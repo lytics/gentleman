@@ -1,10 +1,11 @@
 package redirect
 
 import (
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/context"
 	"net/http"
 	"testing"
+
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/utils"
 )
 
 func TestRedirectPolicy(t *testing.T) {
@@ -17,8 +18,8 @@ func TestRedirectPolicy(t *testing.T) {
 	opts := Options{}
 
 	err := redirectPolicy(opts, req, pool)
-	st.Expect(t, err, nil)
-	st.Expect(t, req.Header.Get("foo"), "bar")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, req.Header.Get("foo"), "bar")
 }
 
 func TestRedirectPolicyRemoveSensitiveHeaders(t *testing.T) {
@@ -32,9 +33,9 @@ func TestRedirectPolicyRemoveSensitiveHeaders(t *testing.T) {
 	opts := Options{SensitiveHeaders: []string{"Authorization"}}
 
 	err := redirectPolicy(opts, req, pool)
-	st.Expect(t, err, nil)
-	st.Expect(t, req.Header.Get("foo"), "bar")
-	st.Expect(t, req.Header.Get("Authorization"), "")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, req.Header.Get("foo"), "bar")
+	utils.Equal(t, req.Header.Get("Authorization"), "")
 }
 
 func TestRedirectPolicyLimit(t *testing.T) {
@@ -44,14 +45,14 @@ func TestRedirectPolicyLimit(t *testing.T) {
 	opts := Options{Limit: 1}
 
 	err := redirectPolicy(opts, req, pool)
-	st.Expect(t, err, ErrRedirectLimitExceeded)
+	utils.Equal(t, err, ErrRedirectLimitExceeded)
 }
 
 func TestRedirectPlugin(t *testing.T) {
 	ctx := context.New()
 	fn := newHandler()
 	Config(Options{}).Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
+	utils.Equal(t, fn.called, true)
 }
 
 type handler struct {

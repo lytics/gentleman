@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/url"
 
-	"gopkg.in/h2non/gentleman.v2"
-	"gopkg.in/h2non/gentleman.v2/context"
-	"gopkg.in/h2non/gentleman.v2/plugins/headers"
+	"github.com/lytics/gentleman"
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/plugins/headers"
 )
 
 func main() {

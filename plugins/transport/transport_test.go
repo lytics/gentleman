@@ -1,10 +1,11 @@
 package transport
 
 import (
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/context"
 	"net/http"
 	"testing"
+
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/utils"
 )
 
 func TestSetTransport(t *testing.T) {
@@ -12,9 +13,9 @@ func TestSetTransport(t *testing.T) {
 	fn := newHandler()
 	transport := &http.Transport{}
 	Set(transport).Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
+	utils.Equal(t, fn.called, true)
 	newTransport := ctx.Client.Transport.(*http.Transport)
-	st.Expect(t, newTransport, transport)
+	utils.Equal(t, newTransport, transport)
 }
 
 type handler struct {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"gopkg.in/h2non/gentleman.v2"
-	"gopkg.in/h2non/gentleman.v2/plugins/transport"
+	"github.com/lytics/gentleman"
+	"github.com/lytics/gentleman/plugins/transport"
 )
 
 func main() {

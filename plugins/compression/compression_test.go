@@ -1,19 +1,20 @@
 package compression
 
 import (
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/context"
 	"net/http"
 	"testing"
+
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/utils"
 )
 
 func TestDisableCompression(t *testing.T) {
 	ctx := context.New()
 	fn := newHandler()
 	Disable().Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
+	utils.Equal(t, fn.called, true)
 	transport := ctx.Client.Transport.(*http.Transport)
-	st.Expect(t, transport.DisableCompression, true)
+	utils.Equal(t, transport.DisableCompression, true)
 }
 
 type handler struct {

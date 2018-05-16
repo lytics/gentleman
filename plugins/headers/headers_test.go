@@ -1,9 +1,10 @@
 package headers
 
 import (
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/context"
 	"testing"
+
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/utils"
 )
 
 func TestHeaderSet(t *testing.T) {
@@ -11,8 +12,8 @@ func TestHeaderSet(t *testing.T) {
 	fn := newHandler()
 
 	Set("foo", "bar").Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
-	st.Expect(t, ctx.Request.Header.Get("foo"), "bar")
+	utils.Equal(t, fn.called, true)
+	utils.Equal(t, ctx.Request.Header.Get("foo"), "bar")
 }
 
 func TestHeaderAdd(t *testing.T) {
@@ -21,8 +22,8 @@ func TestHeaderAdd(t *testing.T) {
 	fn := newHandler()
 
 	Add("foo", "bar").Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
-	st.Expect(t, ctx.Request.Header["Foo"][1], "bar")
+	utils.Equal(t, fn.called, true)
+	utils.Equal(t, ctx.Request.Header["Foo"][1], "bar")
 }
 
 func TestHeaderDel(t *testing.T) {
@@ -31,8 +32,8 @@ func TestHeaderDel(t *testing.T) {
 	fn := newHandler()
 
 	Del("foo").Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
-	st.Expect(t, ctx.Request.Header.Get("foo"), "")
+	utils.Equal(t, fn.called, true)
+	utils.Equal(t, ctx.Request.Header.Get("foo"), "")
 }
 
 func TestHeaderSetMap(t *testing.T) {
@@ -42,8 +43,8 @@ func TestHeaderSetMap(t *testing.T) {
 	headers := map[string]string{"foo": "bar"}
 
 	SetMap(headers).Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
-	st.Expect(t, ctx.Request.Header.Get("foo"), "bar")
+	utils.Equal(t, fn.called, true)
+	utils.Equal(t, ctx.Request.Header.Get("foo"), "bar")
 }
 
 type handler struct {

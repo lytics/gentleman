@@ -8,8 +8,8 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/context"
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/utils"
 )
 
 func TestDispatcher(t *testing.T) {
@@ -26,8 +26,8 @@ func TestDispatcher(t *testing.T) {
 	})
 
 	ctx := NewDispatcher(req).Dispatch()
-	st.Expect(t, ctx.Error, nil)
-	st.Expect(t, ctx.Response.StatusCode, 200)
+	utils.Equal(t, ctx.Error, nil)
+	utils.Equal(t, ctx.Response.StatusCode, 200)
 }
 
 func TestDispatcherError(t *testing.T) {
@@ -45,8 +45,8 @@ func TestDispatcherError(t *testing.T) {
 	})
 
 	ctx := NewDispatcher(req).Dispatch()
-	st.Reject(t, err, nil)
-	st.Reject(t, ctx.Error, nil)
+	utils.NotEqual(t, err, nil)
+	utils.NotEqual(t, ctx.Error, nil)
 }
 
 func TestDispatcherInterceptor(t *testing.T) {
@@ -61,8 +61,8 @@ func TestDispatcherInterceptor(t *testing.T) {
 	})
 
 	ctx := NewDispatcher(req).Dispatch()
-	st.Expect(t, ctx.Error, nil)
-	st.Expect(t, ctx.Response.StatusCode, 204)
+	utils.Equal(t, ctx.Error, nil)
+	utils.Equal(t, ctx.Response.StatusCode, 204)
 }
 
 func TestDispatcherResponseError(t *testing.T) {
@@ -73,8 +73,8 @@ func TestDispatcherResponseError(t *testing.T) {
 	})
 
 	ctx := NewDispatcher(req).Dispatch()
-	st.Reject(t, ctx.Error, nil)
-	st.Expect(t, ctx.Response.StatusCode, 503)
+	utils.NotEqual(t, ctx.Error, nil)
+	utils.Equal(t, ctx.Response.StatusCode, 503)
 }
 
 func TestDispatcherStopped(t *testing.T) {
@@ -85,9 +85,9 @@ func TestDispatcherStopped(t *testing.T) {
 	})
 
 	ctx := NewDispatcher(req).Dispatch()
-	st.Expect(t, ctx.Stopped, true)
-	st.Expect(t, ctx.Error, nil)
-	st.Expect(t, ctx.Response.StatusCode, 503)
+	utils.Equal(t, ctx.Stopped, true)
+	utils.Equal(t, ctx.Error, nil)
+	utils.Equal(t, ctx.Response.StatusCode, 503)
 }
 
 func TestDispatcherStoppedMiddleware(t *testing.T) {
@@ -102,8 +102,8 @@ func TestDispatcherStoppedMiddleware(t *testing.T) {
 	})
 
 	ctx := NewDispatcher(req).Dispatch()
-	st.Expect(t, ctx.Stopped, true)
-	st.Reject(t, ctx.Error, nil)
-	st.Expect(t, ctx.Error.Error(), "stop")
-	st.Expect(t, ctx.GetString("foo"), "bar")
+	utils.Equal(t, ctx.Stopped, true)
+	utils.NotEqual(t, ctx.Error, nil)
+	utils.Equal(t, ctx.Error.Error(), "stop")
+	utils.Equal(t, ctx.GetString("foo"), "bar")
 }

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"gopkg.in/h2non/gentleman.v2"
-	"gopkg.in/h2non/gentleman.v2/plugins/multipart"
+	"github.com/lytics/gentleman"
+	"github.com/lytics/gentleman/plugins/multipart"
 )
 
 func main() {

@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/context"
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/utils"
 )
 
 func TestClientMiddlewareContext(t *testing.T) {
@@ -27,7 +27,7 @@ func TestClientMiddlewareContext(t *testing.T) {
 	ctx := NewContext()
 	cli.Middleware.Run("request", ctx)
 	cli.Middleware.Run("response", ctx)
-	st.Expect(t, ctx.GetString("foo"), "barbar")
+	utils.Equal(t, ctx.GetString("foo"), "barbar")
 }
 
 func TestClientInheritance(t *testing.T) {
@@ -46,7 +46,7 @@ func TestClientInheritance(t *testing.T) {
 
 	ctx := NewContext()
 	cli.Middleware.Run("request", ctx)
-	st.Expect(t, ctx.Request.Header.Get("Client"), "gogo")
+	utils.Equal(t, ctx.Request.Header.Get("Client"), "gogo")
 }
 
 func TestClientRequestMiddleware(t *testing.T) {
@@ -71,10 +71,10 @@ func TestClientRequestMiddleware(t *testing.T) {
 	})
 
 	res, err := req.Do()
-	st.Expect(t, err, nil)
-	st.Expect(t, res.StatusCode, 200)
-	st.Expect(t, res.Header.Get("Server"), "go")
-	st.Expect(t, res.Header.Get("Agent"), "gentleman")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, res.StatusCode, 200)
+	utils.Equal(t, res.Header.Get("Server"), "go")
+	utils.Equal(t, res.Header.Get("Agent"), "gentleman")
 }
 
 func TestClientRequestResponseMiddleware(t *testing.T) {
@@ -96,9 +96,9 @@ func TestClientRequestResponseMiddleware(t *testing.T) {
 	req := client.Request()
 	req.URL(ts.URL)
 	res, err := req.Do()
-	st.Expect(t, err, nil)
-	st.Expect(t, res.StatusCode, 200)
-	st.Expect(t, res.Header.Get("Server"), "go")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, res.StatusCode, 200)
+	utils.Equal(t, res.Header.Get("Server"), "go")
 }
 
 func TestClientErrorMiddleware(t *testing.T) {
@@ -114,9 +114,9 @@ func TestClientErrorMiddleware(t *testing.T) {
 
 	req := client.Request()
 	res, err := req.Do()
-	st.Expect(t, err.Error(), "error: foo error")
-	st.Expect(t, res.Ok, false)
-	st.Expect(t, res.StatusCode, 0)
+	utils.Equal(t, err.Error(), "error: foo error")
+	utils.Equal(t, res.Ok, false)
+	utils.Equal(t, res.StatusCode, 0)
 }
 
 func TestClientCustomPhaseMiddleware(t *testing.T) {
@@ -132,16 +132,16 @@ func TestClientCustomPhaseMiddleware(t *testing.T) {
 
 	req := client.Request()
 	res, err := req.Do()
-	st.Expect(t, err.Error(), "error: foo error")
-	st.Expect(t, res.Ok, false)
-	st.Expect(t, res.StatusCode, 0)
+	utils.Equal(t, err.Error(), "error: foo error")
+	utils.Equal(t, res.Ok, false)
+	utils.Equal(t, res.StatusCode, 0)
 }
 
 func TestClientMethod(t *testing.T) {
 	cli := New()
 	cli.Method("POST")
 	cli.Middleware.Run("request", cli.Context)
-	st.Expect(t, cli.Context.Request.Method, "POST")
+	utils.Equal(t, cli.Context.Request.Method, "POST")
 }
 
 func TestClientURL(t *testing.T) {
@@ -149,7 +149,7 @@ func TestClientURL(t *testing.T) {
 	cli := New()
 	cli.URL(url)
 	cli.Middleware.Run("request", cli.Context)
-	st.Expect(t, cli.Context.Request.URL.String(), url)
+	utils.Equal(t, cli.Context.Request.URL.String(), url)
 }
 
 func TestClientBaseURL(t *testing.T) {
@@ -157,7 +157,7 @@ func TestClientBaseURL(t *testing.T) {
 	cli := New()
 	cli.BaseURL(url)
 	cli.Middleware.Run("request", cli.Context)
-	st.Expect(t, cli.Context.Request.URL.String(), "http://foo.com")
+	utils.Equal(t, cli.Context.Request.URL.String(), "http://foo.com")
 }
 
 func TestClientPath(t *testing.T) {
@@ -167,7 +167,7 @@ func TestClientPath(t *testing.T) {
 	cli.URL(url)
 	cli.Path(path)
 	cli.Middleware.Run("request", cli.Context)
-	st.Expect(t, cli.Context.Request.URL.String(), "http://foo.com/foo/baz")
+	utils.Equal(t, cli.Context.Request.URL.String(), "http://foo.com/foo/baz")
 }
 
 func TestClientPathParam(t *testing.T) {
@@ -179,7 +179,7 @@ func TestClientPathParam(t *testing.T) {
 	cli.Param("foo", "baz")
 	cli.Param("baz", "foo")
 	cli.Middleware.Run("request", cli.Context)
-	st.Expect(t, cli.Context.Request.URL.String(), "http://foo.com/baz/bar/foo")
+	utils.Equal(t, cli.Context.Request.URL.String(), "http://foo.com/baz/bar/foo")
 }
 
 func TestClientPathParams(t *testing.T) {
@@ -190,14 +190,14 @@ func TestClientPathParams(t *testing.T) {
 	cli.Path(path)
 	cli.Params(map[string]string{"foo": "baz", "baz": "foo"})
 	cli.Middleware.Run("request", cli.Context)
-	st.Expect(t, cli.Context.Request.URL.String(), "http://foo.com/baz/bar/foo")
+	utils.Equal(t, cli.Context.Request.URL.String(), "http://foo.com/baz/bar/foo")
 }
 
 func TestClientSetHeader(t *testing.T) {
 	cli := New()
 	cli.SetHeader("foo", "bar")
 	cli.Middleware.Run("request", cli.Context)
-	st.Expect(t, cli.Context.Request.Header.Get("foo"), "bar")
+	utils.Equal(t, cli.Context.Request.Header.Get("foo"), "bar")
 }
 
 func TestClientAddHeader(t *testing.T) {
@@ -205,15 +205,15 @@ func TestClientAddHeader(t *testing.T) {
 	cli.AddHeader("foo", "baz")
 	cli.AddHeader("foo", "bar")
 	cli.Middleware.Run("request", cli.Context)
-	st.Expect(t, cli.Context.Request.Header.Get("foo"), "baz")
+	utils.Equal(t, cli.Context.Request.Header.Get("foo"), "baz")
 }
 
 func TestClientSetHeaders(t *testing.T) {
 	cli := New()
 	cli.SetHeaders(map[string]string{"foo": "baz", "baz": "foo"})
 	cli.Middleware.Run("request", cli.Context)
-	st.Expect(t, cli.Context.Request.Header.Get("foo"), "baz")
-	st.Expect(t, cli.Context.Request.Header.Get("baz"), "foo")
+	utils.Equal(t, cli.Context.Request.Header.Get("foo"), "baz")
+	utils.Equal(t, cli.Context.Request.Header.Get("baz"), "foo")
 }
 
 func TestClientAddCookie(t *testing.T) {
@@ -221,7 +221,7 @@ func TestClientAddCookie(t *testing.T) {
 	cookie := &http.Cookie{Name: "foo", Value: "bar"}
 	cli.AddCookie(cookie)
 	cli.Middleware.Run("request", cli.Context)
-	st.Expect(t, cli.Context.Request.Header.Get("Cookie"), "foo=bar")
+	utils.Equal(t, cli.Context.Request.Header.Get("Cookie"), "foo=bar")
 }
 
 func TestClientAddCookies(t *testing.T) {
@@ -229,14 +229,14 @@ func TestClientAddCookies(t *testing.T) {
 	cookies := []*http.Cookie{{Name: "foo", Value: "bar"}}
 	cli.AddCookies(cookies)
 	cli.Middleware.Run("request", cli.Context)
-	st.Expect(t, cli.Context.Request.Header.Get("Cookie"), "foo=bar")
+	utils.Equal(t, cli.Context.Request.Header.Get("Cookie"), "foo=bar")
 }
 
 func TestClientCookieJar(t *testing.T) {
 	cli := New()
 	cli.CookieJar()
 	cli.Middleware.Run("request", cli.Context)
-	st.Reject(t, cli.Context.Client.Jar, nil)
+	utils.NotEqual(t, cli.Context.Client.Jar, nil)
 }
 
 func TestClientVerbMethods(t *testing.T) {

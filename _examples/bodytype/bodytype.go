@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"gopkg.in/h2non/gentleman.v2"
-	"gopkg.in/h2non/gentleman.v2/plugins/body"
-	"gopkg.in/h2non/gentleman.v2/plugins/bodytype"
+	"github.com/lytics/gentleman"
+	"github.com/lytics/gentleman/plugins/body"
+	"github.com/lytics/gentleman/plugins/bodytype"
 )
 
 func main() {

@@ -3,8 +3,8 @@ package mux
 import (
 	"testing"
 
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/context"
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/utils"
 )
 
 func TestMuxComposeIfMatches(t *testing.T) {
@@ -17,7 +17,7 @@ func TestMuxComposeIfMatches(t *testing.T) {
 	ctx.Request.Method = "GET"
 	ctx.Request.URL.Host = "foo.com"
 	mx.Run("request", ctx)
-	st.Expect(t, ctx.Request.Header.Get("foo"), "bar")
+	utils.Equal(t, ctx.Request.Header.Get("foo"), "bar")
 }
 
 func TestMuxComposeIfUnmatch(t *testing.T) {
@@ -30,7 +30,7 @@ func TestMuxComposeIfUnmatch(t *testing.T) {
 	ctx.Request.Method = "GET"
 	ctx.Request.URL.Host = "foo.com"
 	mx.Run("request", ctx)
-	st.Expect(t, ctx.Request.Header.Get("foo"), "")
+	utils.Equal(t, ctx.Request.Header.Get("foo"), "")
 }
 
 func TestMuxComposeOrMatch(t *testing.T) {
@@ -43,7 +43,7 @@ func TestMuxComposeOrMatch(t *testing.T) {
 	ctx.Request.Method = "GET"
 	ctx.Request.URL.Host = "foo.com"
 	mx.Run("request", ctx)
-	st.Expect(t, ctx.Request.Header.Get("foo"), "bar")
+	utils.Equal(t, ctx.Request.Header.Get("foo"), "bar")
 }
 
 func TestMuxComposeOrUnMatch(t *testing.T) {
@@ -56,5 +56,5 @@ func TestMuxComposeOrUnMatch(t *testing.T) {
 	ctx.Request.Method = "POST"
 	ctx.Request.URL.Host = "foo.com"
 	mx.Run("request", ctx)
-	st.Expect(t, ctx.Request.Header.Get("foo"), "")
+	utils.Equal(t, ctx.Request.Header.Get("foo"), "")
 }

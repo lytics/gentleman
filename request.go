@@ -7,17 +7,19 @@ import (
 	"net/http"
 	"time"
 
-	"gopkg.in/h2non/gentleman.v2/context"
-	"gopkg.in/h2non/gentleman.v2/middleware"
-	"gopkg.in/h2non/gentleman.v2/mux"
-	"gopkg.in/h2non/gentleman.v2/plugin"
-	"gopkg.in/h2non/gentleman.v2/plugins/body"
-	"gopkg.in/h2non/gentleman.v2/plugins/bodytype"
-	"gopkg.in/h2non/gentleman.v2/plugins/cookies"
-	"gopkg.in/h2non/gentleman.v2/plugins/headers"
-	"gopkg.in/h2non/gentleman.v2/plugins/multipart"
-	"gopkg.in/h2non/gentleman.v2/plugins/query"
-	"gopkg.in/h2non/gentleman.v2/plugins/url"
+	"github.com/lytics/gentleman/context"
+
+	// "github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/middleware"
+	"github.com/lytics/gentleman/mux"
+	"github.com/lytics/gentleman/plugin"
+	"github.com/lytics/gentleman/plugins/body"
+	"github.com/lytics/gentleman/plugins/bodytype"
+	"github.com/lytics/gentleman/plugins/cookies"
+	"github.com/lytics/gentleman/plugins/headers"
+	"github.com/lytics/gentleman/plugins/multipart"
+	"github.com/lytics/gentleman/plugins/query"
+	"github.com/lytics/gentleman/plugins/url"
 )
 
 const (

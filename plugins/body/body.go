@@ -8,9 +8,9 @@ import (
 	"io/ioutil"
 	"strings"
 
-	c "gopkg.in/h2non/gentleman.v2/context"
-	p "gopkg.in/h2non/gentleman.v2/plugin"
-	"gopkg.in/h2non/gentleman.v2/utils"
+	c "github.com/lytics/gentleman/context"
+	p "github.com/lytics/gentleman/plugin"
+	"github.com/lytics/gentleman/utils"
 )
 
 // String defines the HTTP request body based on the given string.

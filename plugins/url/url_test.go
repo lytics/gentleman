@@ -1,10 +1,11 @@
 package url
 
 import (
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/context"
 	"net/url"
 	"testing"
+
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/utils"
 )
 
 type test struct {
@@ -120,7 +121,7 @@ func TestPathParam(t *testing.T) {
 		fn := newHandler()
 		ctx.Request.URL.Path = test.path
 		Param(test.key, test.value).Exec("request", ctx, fn.fn)
-		st.Expect(t, ctx.Request.URL.Path, test.url.Path)
+		utils.Equal(t, ctx.Request.URL.Path, test.url.Path)
 	}
 }
 
@@ -143,18 +144,18 @@ func TestPathParams(t *testing.T) {
 		fn := newHandler()
 		ctx.Request.URL.Path = test.path
 		Params(test.list).Exec("request", ctx, fn.fn)
-		st.Expect(t, ctx.Request.URL.Path, test.url.Path)
+		utils.Equal(t, ctx.Request.URL.Path, test.url.Path)
 	}
 }
 
 func assert(t *testing.T, fn *handler, ctx *context.Context, test test) {
-	st.Expect(t, fn.called, true)
-	st.Expect(t, ctx.Error, nil)
-	st.Expect(t, ctx.Request.URL.Host, test.url.Host)
-	st.Expect(t, ctx.Request.URL.Scheme, test.url.Scheme)
-	st.Expect(t, ctx.Request.URL.Path, test.url.Path)
-	st.Expect(t, ctx.Request.URL.RawQuery, test.url.RawQuery)
-	st.Expect(t, ctx.Request.URL.Fragment, test.url.Fragment)
+	utils.Equal(t, fn.called, true)
+	utils.Equal(t, ctx.Error, nil)
+	utils.Equal(t, ctx.Request.URL.Host, test.url.Host)
+	utils.Equal(t, ctx.Request.URL.Scheme, test.url.Scheme)
+	utils.Equal(t, ctx.Request.URL.Path, test.url.Path)
+	utils.Equal(t, ctx.Request.URL.RawQuery, test.url.RawQuery)
+	utils.Equal(t, ctx.Request.URL.Fragment, test.url.Fragment)
 }
 
 type handler struct {

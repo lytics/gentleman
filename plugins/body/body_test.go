@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/context"
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/utils"
 )
 
 func TestBodyJSONEncodeMap(t *testing.T) {
@@ -15,13 +15,13 @@ func TestBodyJSONEncodeMap(t *testing.T) {
 
 	json := map[string]string{"foo": "bar"}
 	JSON(json).Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
+	utils.Equal(t, fn.called, true)
 	buf, err := ioutil.ReadAll(ctx.Request.Body)
-	st.Expect(t, err, nil)
-	st.Expect(t, ctx.Request.Method, "GET")
-	st.Expect(t, ctx.Request.Header.Get("Content-Type"), "application/json")
-	st.Expect(t, int(ctx.Request.ContentLength), 14)
-	st.Expect(t, string(buf[0:len(buf)-1]), `{"foo":"bar"}`)
+	utils.Equal(t, err, nil)
+	utils.Equal(t, ctx.Request.Method, "GET")
+	utils.Equal(t, ctx.Request.Header.Get("Content-Type"), "application/json")
+	utils.Equal(t, int(ctx.Request.ContentLength), 14)
+	utils.Equal(t, string(buf[0:len(buf)-1]), `{"foo":"bar"}`)
 }
 
 func TestBodyJSONEncodeString(t *testing.T) {
@@ -30,13 +30,13 @@ func TestBodyJSONEncodeString(t *testing.T) {
 
 	json := `{"foo":"bar"}`
 	JSON(json).Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
+	utils.Equal(t, fn.called, true)
 	buf, err := ioutil.ReadAll(ctx.Request.Body)
-	st.Expect(t, err, nil)
-	st.Expect(t, ctx.Request.Method, "GET")
-	st.Expect(t, ctx.Request.Header.Get("Content-Type"), "application/json")
-	st.Expect(t, int(ctx.Request.ContentLength), 13)
-	st.Expect(t, string(buf), `{"foo":"bar"}`)
+	utils.Equal(t, err, nil)
+	utils.Equal(t, ctx.Request.Method, "GET")
+	utils.Equal(t, ctx.Request.Header.Get("Content-Type"), "application/json")
+	utils.Equal(t, int(ctx.Request.ContentLength), 13)
+	utils.Equal(t, string(buf), `{"foo":"bar"}`)
 }
 
 func TestBodyJSONEncodeBytes(t *testing.T) {
@@ -45,13 +45,13 @@ func TestBodyJSONEncodeBytes(t *testing.T) {
 
 	json := []byte(`{"foo":"bar"}`)
 	JSON(json).Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
+	utils.Equal(t, fn.called, true)
 	buf, err := ioutil.ReadAll(ctx.Request.Body)
-	st.Expect(t, err, nil)
-	st.Expect(t, ctx.Request.Method, "GET")
-	st.Expect(t, ctx.Request.Header.Get("Content-Type"), "application/json")
-	st.Expect(t, int(ctx.Request.ContentLength), 13)
-	st.Expect(t, string(buf), `{"foo":"bar"}`)
+	utils.Equal(t, err, nil)
+	utils.Equal(t, ctx.Request.Method, "GET")
+	utils.Equal(t, ctx.Request.Header.Get("Content-Type"), "application/json")
+	utils.Equal(t, int(ctx.Request.ContentLength), 13)
+	utils.Equal(t, string(buf), `{"foo":"bar"}`)
 }
 
 func TestBodyXMLEncodeStruct(t *testing.T) {
@@ -63,14 +63,14 @@ func TestBodyXMLEncodeStruct(t *testing.T) {
 	}
 	xml := xmlTest{Name: "foo"}
 	XML(xml).Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
+	utils.Equal(t, fn.called, true)
 
 	buf, err := ioutil.ReadAll(ctx.Request.Body)
-	st.Expect(t, err, nil)
-	st.Expect(t, ctx.Request.Method, "GET")
-	st.Expect(t, ctx.Request.Header.Get("Content-Type"), "application/xml")
-	st.Expect(t, int(ctx.Request.ContentLength), 50)
-	st.Expect(t, string(buf), `<xmlTest><name><first>foo</first></name></xmlTest>`)
+	utils.Equal(t, err, nil)
+	utils.Equal(t, ctx.Request.Method, "GET")
+	utils.Equal(t, ctx.Request.Header.Get("Content-Type"), "application/xml")
+	utils.Equal(t, int(ctx.Request.ContentLength), 50)
+	utils.Equal(t, string(buf), `<xmlTest><name><first>foo</first></name></xmlTest>`)
 }
 
 func TestBodyXMLEncodeString(t *testing.T) {
@@ -79,14 +79,14 @@ func TestBodyXMLEncodeString(t *testing.T) {
 
 	xml := "<test>foo</test>"
 	XML(xml).Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
+	utils.Equal(t, fn.called, true)
 
 	buf, err := ioutil.ReadAll(ctx.Request.Body)
-	st.Expect(t, err, nil)
-	st.Expect(t, ctx.Request.Method, "GET")
-	st.Expect(t, ctx.Request.Header.Get("Content-Type"), "application/xml")
-	st.Expect(t, int(ctx.Request.ContentLength), 16)
-	st.Expect(t, string(buf), `<test>foo</test>`)
+	utils.Equal(t, err, nil)
+	utils.Equal(t, ctx.Request.Method, "GET")
+	utils.Equal(t, ctx.Request.Header.Get("Content-Type"), "application/xml")
+	utils.Equal(t, int(ctx.Request.ContentLength), 16)
+	utils.Equal(t, string(buf), `<test>foo</test>`)
 }
 
 func TestBodyXMLEncodeBytes(t *testing.T) {
@@ -96,14 +96,14 @@ func TestBodyXMLEncodeBytes(t *testing.T) {
 
 	xml := []byte("<test>foo</test>")
 	XML(xml).Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
+	utils.Equal(t, fn.called, true)
 
 	buf, err := ioutil.ReadAll(ctx.Request.Body)
-	st.Expect(t, err, nil)
-	st.Expect(t, ctx.Request.Method, "POST")
-	st.Expect(t, ctx.Request.Header.Get("Content-Type"), "application/xml")
-	st.Expect(t, int(ctx.Request.ContentLength), 16)
-	st.Expect(t, string(buf), `<test>foo</test>`)
+	utils.Equal(t, err, nil)
+	utils.Equal(t, ctx.Request.Method, "POST")
+	utils.Equal(t, ctx.Request.Header.Get("Content-Type"), "application/xml")
+	utils.Equal(t, int(ctx.Request.ContentLength), 16)
+	utils.Equal(t, string(buf), `<test>foo</test>`)
 }
 
 func TestBodyReader(t *testing.T) {
@@ -113,14 +113,14 @@ func TestBodyReader(t *testing.T) {
 
 	reader := bytes.NewReader([]byte("foo bar"))
 	Reader(reader).Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
+	utils.Equal(t, fn.called, true)
 
 	buf, err := ioutil.ReadAll(ctx.Request.Body)
-	st.Expect(t, err, nil)
-	st.Expect(t, ctx.Request.Method, "POST")
-	st.Expect(t, ctx.Request.Header.Get("Content-Type"), "")
-	st.Expect(t, int(ctx.Request.ContentLength), 7)
-	st.Expect(t, string(buf), "foo bar")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, ctx.Request.Method, "POST")
+	utils.Equal(t, ctx.Request.Header.Get("Content-Type"), "")
+	utils.Equal(t, int(ctx.Request.ContentLength), 7)
+	utils.Equal(t, string(buf), "foo bar")
 }
 
 func TestBodyReaderContextDataSharing(t *testing.T) {
@@ -134,18 +134,18 @@ func TestBodyReaderContextDataSharing(t *testing.T) {
 
 	reader := bytes.NewReader([]byte("foo bar"))
 	Reader(reader).Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
+	utils.Equal(t, fn.called, true)
 
 	buf, err := ioutil.ReadAll(ctx.Request.Body)
-	st.Expect(t, err, nil)
-	st.Expect(t, ctx.Request.Method, "POST")
-	st.Expect(t, ctx.Request.Header.Get("Content-Type"), "")
-	st.Expect(t, int(ctx.Request.ContentLength), 7)
-	st.Expect(t, string(buf), "foo bar")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, ctx.Request.Method, "POST")
+	utils.Equal(t, ctx.Request.Header.Get("Content-Type"), "")
+	utils.Equal(t, int(ctx.Request.ContentLength), 7)
+	utils.Equal(t, string(buf), "foo bar")
 
 	// Test context data
-	st.Expect(t, ctx.GetString("foo"), "bar")
-	st.Expect(t, ctx.GetString("bar"), "baz")
+	utils.Equal(t, ctx.GetString("foo"), "bar")
+	utils.Equal(t, ctx.GetString("bar"), "baz")
 }
 
 type handler struct {

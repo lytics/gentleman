@@ -3,8 +3,8 @@ package mux
 import (
 	"testing"
 
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/context"
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/utils"
 )
 
 func TestMuxSimple(t *testing.T) {
@@ -15,7 +15,7 @@ func TestMuxSimple(t *testing.T) {
 	})
 	ctx := context.New()
 	mx.Run("request", ctx)
-	st.Expect(t, ctx.Request.Header.Get("foo"), "bar")
+	utils.Equal(t, ctx.Request.Header.Get("foo"), "bar")
 }
 
 type handler struct {

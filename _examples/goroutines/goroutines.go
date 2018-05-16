@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"gopkg.in/h2non/gentleman.v2"
+	"github.com/lytics/gentleman"
 )
 
 func main() {

@@ -1,11 +1,10 @@
 package cookies
 
 import (
-	"golang.org/x/net/publicsuffix"
-	c "gopkg.in/h2non/gentleman.v2/context"
-	p "gopkg.in/h2non/gentleman.v2/plugin"
 	"net/http"
-	"net/http/cookiejar"
+
+	c "github.com/lytics/gentleman/context"
+	p "github.com/lytics/gentleman/plugin"
 )
 
 // Add adds a cookie to the request. Per RFC 6265 section 5.4, AddCookie does not
@@ -57,10 +56,10 @@ func AddMultiple(cookies []*http.Cookie) p.Plugin {
 }
 
 // Jar creates a cookie jar to store HTTP cookies when they are sent down.
-func Jar() p.Plugin {
-	return p.NewRequestPlugin(func(ctx *c.Context, h c.Handler) {
-		jar, _ := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
-		ctx.Client.Jar = jar
-		h.Next(ctx)
-	})
-}
+// func Jar() p.Plugin {
+// 	return p.NewRequestPlugin(func(ctx *c.Context, h c.Handler) {
+// 		jar, _ := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
+// 		ctx.Client.Jar = jar
+// 		h.Next(ctx)
+// 	})
+// }

@@ -6,8 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/utils"
+	"github.com/lytics/gentleman/utils"
 )
 
 func TestResponseBuild(t *testing.T) {
@@ -81,9 +80,9 @@ func TestResponseReadError(t *testing.T) {
 	ctx.Error = errors.New("foo error")
 	res, _ := buildResponse(ctx)
 	num, err := res.Read([]byte{})
-	st.Reject(t, err, nil)
-	st.Expect(t, err.Error(), "foo error")
-	st.Expect(t, num, -1)
+	utils.NotEqual(t, err, nil)
+	utils.Equal(t, err.Error(), "foo error")
+	utils.Equal(t, num, -1)
 }
 
 func TestResponseCloseError(t *testing.T) {
@@ -91,8 +90,8 @@ func TestResponseCloseError(t *testing.T) {
 	ctx.Error = errors.New("foo error")
 	res, _ := buildResponse(ctx)
 	err := res.Close()
-	st.Reject(t, err, nil)
-	st.Expect(t, err.Error(), "foo error")
+	utils.NotEqual(t, err, nil)
+	utils.Equal(t, err.Error(), "foo error")
 }
 
 func TestResponseSaveToFile(t *testing.T) {
@@ -100,12 +99,12 @@ func TestResponseSaveToFile(t *testing.T) {
 	utils.WriteBodyString(ctx.Response, "hello world")
 	res, _ := buildResponse(ctx)
 	err := res.SaveToFile("body.tmp")
-	st.Expect(t, err, nil)
+	utils.Equal(t, err, nil)
 	defer os.Remove("body.tmp")
 
 	body, err := ioutil.ReadFile("body.tmp")
-	st.Expect(t, err, nil)
-	st.Expect(t, string(body), "hello world")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, string(body), "hello world")
 }
 
 func TestResponseSaveToFileError(t *testing.T) {
@@ -113,7 +112,7 @@ func TestResponseSaveToFileError(t *testing.T) {
 	ctx.Error = errors.New("foo error")
 	res, _ := buildResponse(ctx)
 	err := res.SaveToFile("body.tmp")
-	st.Reject(t, err, nil)
+	utils.NotEqual(t, err, nil)
 }
 
 func TestResponseJSON(t *testing.T) {
@@ -125,8 +124,8 @@ func TestResponseJSON(t *testing.T) {
 	utils.WriteBodyString(ctx.Response, `{"foo":"bar"}`)
 	res, _ := buildResponse(ctx)
 	err := res.JSON(json)
-	st.Expect(t, err, nil)
-	st.Expect(t, json.Foo, "bar")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, json.Foo, "bar")
 }
 
 func TestResponseJSONError(t *testing.T) {
@@ -138,8 +137,8 @@ func TestResponseJSONError(t *testing.T) {
 	ctx.Error = errors.New("foo error")
 	res, _ := buildResponse(ctx)
 	err := res.JSON(json)
-	st.Reject(t, err, nil)
-	st.Expect(t, json.Foo, "")
+	utils.NotEqual(t, err, nil)
+	utils.Equal(t, json.Foo, "")
 }
 
 func TestResponseXML(t *testing.T) {
@@ -151,8 +150,8 @@ func TestResponseXML(t *testing.T) {
 	utils.WriteBodyString(ctx.Response, `<xml><foo>bar</foo></xml>`)
 	res, _ := buildResponse(ctx)
 	err := res.XML(xmlData, nil)
-	st.Expect(t, err, nil)
-	st.Expect(t, xmlData.Foo, "bar")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, xmlData.Foo, "bar")
 }
 
 func TestResponseXMLError(t *testing.T) {
@@ -165,8 +164,8 @@ func TestResponseXMLError(t *testing.T) {
 	utils.WriteBodyString(ctx.Response, `<xml><foo>bar</foo></xml>`)
 	res, _ := buildResponse(ctx)
 	err := res.XML(xmlData, nil)
-	st.Reject(t, err, nil)
-	st.Expect(t, xmlData.Foo, "")
+	utils.NotEqual(t, err, nil)
+	utils.Equal(t, xmlData.Foo, "")
 }
 
 func TestResponseString(t *testing.T) {
@@ -174,8 +173,8 @@ func TestResponseString(t *testing.T) {
 	utils.WriteBodyString(ctx.Response, "foo bar")
 	res, err := buildResponse(ctx)
 	body := res.String()
-	st.Expect(t, err, nil)
-	st.Expect(t, body, "foo bar")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, body, "foo bar")
 }
 
 func TestResponseStringError(t *testing.T) {
@@ -184,8 +183,8 @@ func TestResponseStringError(t *testing.T) {
 	utils.WriteBodyString(ctx.Response, "foo bar")
 	res, err := buildResponse(ctx)
 	body := res.String()
-	st.Reject(t, err, nil)
-	st.Expect(t, body, "")
+	utils.NotEqual(t, err, nil)
+	utils.Equal(t, body, "")
 }
 
 func TestResponseBytes(t *testing.T) {
@@ -193,8 +192,8 @@ func TestResponseBytes(t *testing.T) {
 	utils.WriteBodyString(ctx.Response, "foo bar")
 	res, err := buildResponse(ctx)
 	body := res.Bytes()
-	st.Expect(t, err, nil)
-	st.Expect(t, string(body), "foo bar")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, string(body), "foo bar")
 }
 
 func TestResponseBytesError(t *testing.T) {
@@ -203,8 +202,8 @@ func TestResponseBytesError(t *testing.T) {
 	utils.WriteBodyString(ctx.Response, "foo bar")
 	res, err := buildResponse(ctx)
 	body := res.Bytes()
-	st.Reject(t, err, nil)
-	st.Expect(t, string(body), "")
+	utils.NotEqual(t, err, nil)
+	utils.Equal(t, string(body), "")
 }
 
 func TestResponseReaderBuffer(t *testing.T) {
@@ -214,12 +213,12 @@ func TestResponseReaderBuffer(t *testing.T) {
 	res.RawResponse.ContentLength = 7
 
 	body := res.Bytes()
-	st.Expect(t, err, nil)
-	st.Expect(t, string(body), "foo bar")
-	st.Expect(t, res.buffer.String(), "foo bar")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, string(body), "foo bar")
+	utils.Equal(t, res.buffer.String(), "foo bar")
 
 	res.ClearInternalBuffer()
-	st.Expect(t, string(res.Bytes()), "")
+	utils.Equal(t, string(res.Bytes()), "")
 }
 
 func TestResponseReaderEmtpyBuffer(t *testing.T) {
@@ -228,12 +227,12 @@ func TestResponseReaderEmtpyBuffer(t *testing.T) {
 	res.RawResponse.ContentLength = 0
 
 	body := res.Bytes()
-	st.Expect(t, err, nil)
-	st.Expect(t, string(body), "")
-	st.Expect(t, res.buffer.String(), "")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, string(body), "")
+	utils.Equal(t, res.buffer.String(), "")
 
 	res.ClearInternalBuffer()
-	st.Expect(t, string(res.Bytes()), "")
+	utils.Equal(t, string(res.Bytes()), "")
 }
 
 func TestResponseReaderBufferError(t *testing.T) {
@@ -241,9 +240,9 @@ func TestResponseReaderBufferError(t *testing.T) {
 	ctx.Error = errors.New("foo error")
 	res, err := buildResponse(ctx)
 	body := res.Bytes()
-	st.Reject(t, err, nil)
-	st.Expect(t, string(body), "")
-	st.Expect(t, res.buffer.Len(), 0)
+	utils.NotEqual(t, err, nil)
+	utils.Equal(t, string(body), "")
+	utils.Equal(t, res.buffer.Len(), 0)
 	res.ClearInternalBuffer()
-	st.Expect(t, res.buffer.Len(), 0)
+	utils.Equal(t, res.buffer.Len(), 0)
 }

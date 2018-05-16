@@ -1,9 +1,10 @@
 package query
 
 import (
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/context"
 	"testing"
+
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/utils"
 )
 
 func TestQuerySet(t *testing.T) {
@@ -12,8 +13,8 @@ func TestQuerySet(t *testing.T) {
 	fn := newHandler()
 
 	Set("foo", "bar").Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
-	st.Expect(t, ctx.Request.URL.RawQuery, "baz=foo&foo=bar")
+	utils.Equal(t, fn.called, true)
+	utils.Equal(t, ctx.Request.URL.RawQuery, "baz=foo&foo=bar")
 }
 
 func TestQueryAdd(t *testing.T) {
@@ -22,8 +23,8 @@ func TestQueryAdd(t *testing.T) {
 	fn := newHandler()
 
 	Add("foo", "bar").Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
-	st.Expect(t, ctx.Request.URL.RawQuery, "foo=baz&foo=bar")
+	utils.Equal(t, fn.called, true)
+	utils.Equal(t, ctx.Request.URL.RawQuery, "foo=baz&foo=bar")
 }
 
 func TestQueryDel(t *testing.T) {
@@ -32,8 +33,8 @@ func TestQueryDel(t *testing.T) {
 	fn := newHandler()
 
 	Del("foo").Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
-	st.Expect(t, ctx.Request.URL.RawQuery, "")
+	utils.Equal(t, fn.called, true)
+	utils.Equal(t, ctx.Request.URL.RawQuery, "")
 }
 
 func TestQueryDelAll(t *testing.T) {
@@ -42,8 +43,8 @@ func TestQueryDelAll(t *testing.T) {
 	fn := newHandler()
 
 	DelAll().Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
-	st.Expect(t, ctx.Request.URL.RawQuery, "")
+	utils.Equal(t, fn.called, true)
+	utils.Equal(t, ctx.Request.URL.RawQuery, "")
 }
 
 func TestQuerySetMap(t *testing.T) {
@@ -53,8 +54,8 @@ func TestQuerySetMap(t *testing.T) {
 	params := map[string]string{"foo": "bar"}
 
 	SetMap(params).Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
-	st.Expect(t, ctx.Request.URL.RawQuery, "baz=foo&foo=bar")
+	utils.Equal(t, fn.called, true)
+	utils.Equal(t, ctx.Request.URL.RawQuery, "baz=foo&foo=bar")
 }
 
 type handler struct {

@@ -15,10 +15,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/context"
-	"gopkg.in/h2non/gentleman.v2/plugins/multipart"
-	"gopkg.in/h2non/gentleman.v2/utils"
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/plugins/multipart"
+	"github.com/lytics/gentleman/utils"
 )
 
 func TestRequest(t *testing.T) {
@@ -39,9 +38,9 @@ func TestRequest(t *testing.T) {
 	})
 
 	res, err := req.Send()
-	st.Expect(t, err, nil)
-	st.Reject(t, res.RawRequest.URL, nil)
-	st.Expect(t, res.StatusCode, 200)
+	utils.Equal(t, err, nil)
+	utils.NotEqual(t, res.RawRequest.URL, nil)
+	utils.Equal(t, res.StatusCode, 200)
 }
 
 func TestRequestAlreadyDispatched(t *testing.T) {
@@ -62,12 +61,12 @@ func TestRequestAlreadyDispatched(t *testing.T) {
 	})
 
 	res, err := req.Send()
-	st.Expect(t, err, nil)
-	st.Reject(t, res.RawRequest.URL, nil)
-	st.Expect(t, res.StatusCode, 200)
+	utils.Equal(t, err, nil)
+	utils.NotEqual(t, res.RawRequest.URL, nil)
+	utils.Equal(t, res.StatusCode, 200)
 
 	res, err = req.Send()
-	st.Reject(t, err, nil)
+	utils.NotEqual(t, err, nil)
 }
 
 func TestMiddlewareErrorInjectionAndInterception(t *testing.T) {
@@ -93,9 +92,9 @@ func TestMiddlewareErrorInjectionAndInterception(t *testing.T) {
 	})
 
 	res, err := req.Send()
-	st.Expect(t, err, nil)
-	st.Reject(t, res.RawRequest.URL, nil)
-	st.Expect(t, res.StatusCode, 200)
+	utils.Equal(t, err, nil)
+	utils.NotEqual(t, res.RawRequest.URL, nil)
+	utils.Equal(t, res.StatusCode, 200)
 }
 
 func TestRequestResponseMiddleware(t *testing.T) {
@@ -116,9 +115,9 @@ func TestRequestResponseMiddleware(t *testing.T) {
 	})
 
 	res, err := req.Do()
-	st.Expect(t, err, nil)
-	st.Expect(t, res.StatusCode, 200)
-	st.Expect(t, res.Header.Get("Server"), "go")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, res.StatusCode, 200)
+	utils.Equal(t, res.Header.Get("Server"), "go")
 }
 
 func TestRequestCustomPhaseMiddleware(t *testing.T) {
@@ -139,9 +138,9 @@ func TestRequestCustomPhaseMiddleware(t *testing.T) {
 	})
 
 	res, err := req.Do()
-	st.Expect(t, err, nil)
-	st.Expect(t, res.StatusCode, 200)
-	st.Expect(t, res.Header.Get("Server"), "go")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, res.StatusCode, 200)
+	utils.Equal(t, res.Header.Get("Server"), "go")
 }
 
 func TestRequestOverwriteTargetURL(t *testing.T) {
@@ -157,8 +156,8 @@ func TestRequestOverwriteTargetURL(t *testing.T) {
 	})
 
 	res, err := req.Do()
-	st.Expect(t, err, nil)
-	st.Expect(t, res.StatusCode, 200)
+	utils.Equal(t, err, nil)
+	utils.Equal(t, res.StatusCode, 200)
 }
 
 func TestRequestMux(t *testing.T) {
@@ -182,9 +181,9 @@ func TestRequestMux(t *testing.T) {
 	})
 
 	res, err := req.Send()
-	st.Expect(t, err, nil)
-	st.Expect(t, res.StatusCode, 200)
-	st.Expect(t, res.RawRequest.Header.Get("mux"), "true")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, res.StatusCode, 200)
+	utils.Equal(t, res.RawRequest.Header.Get("mux"), "true")
 }
 
 func TestRequestInterceptor(t *testing.T) {
@@ -212,11 +211,11 @@ func TestRequestInterceptor(t *testing.T) {
 	})
 
 	res, err := req.Do()
-	st.Expect(t, err, nil)
-	st.Expect(t, res.StatusCode, 201)
-	st.Expect(t, res.RawRequest.Header.Get("Client"), "gentleman")
-	st.Expect(t, res.RawResponse.Header.Get("Server"), "gentleman")
-	st.Expect(t, res.String(), "Hello, gentleman")
+	utils.Equal(t, err, nil)
+	utils.Equal(t, res.StatusCode, 201)
+	utils.Equal(t, res.RawRequest.Header.Get("Client"), "gentleman")
+	utils.Equal(t, res.RawResponse.Header.Get("Server"), "gentleman")
+	utils.Equal(t, res.String(), "Hello, gentleman")
 }
 
 func TestRequestTimeout(t *testing.T) {
@@ -238,9 +237,9 @@ func TestRequestTimeout(t *testing.T) {
 	})
 
 	res, err := req.Send()
-	st.Reject(t, err, nil)
-	st.Expect(t, strings.Contains(err.Error(), "net/http: request canceled"), true)
-	st.Expect(t, res.StatusCode, 0)
+	utils.NotEqual(t, err, nil)
+	utils.Equal(t, strings.Contains(err.Error(), "net/http: request canceled"), true)
+	utils.Equal(t, res.StatusCode, 0)
 }
 
 func TestRequestCancel(t *testing.T) {
@@ -261,8 +260,8 @@ func TestRequestCancel(t *testing.T) {
 	})
 
 	res, err := req.Do()
-	st.Expect(t, err, nil)
-	st.Expect(t, res.StatusCode, 0)
+	utils.Equal(t, err, nil)
+	utils.Equal(t, res.StatusCode, 0)
 }
 
 func TestRequestGoroutines(t *testing.T) {
@@ -280,9 +279,9 @@ func TestRequestGoroutines(t *testing.T) {
 		go func(url string) {
 			defer wg.Done()
 			res, err := NewRequest().URL(url).Send()
-			st.Expect(t, err, nil)
-			st.Expect(t, res.Ok, true)
-			st.Expect(t, res.StatusCode, 200)
+			utils.Equal(t, err, nil)
+			utils.Equal(t, res.Ok, true)
+			utils.Equal(t, res.StatusCode, 200)
 		}(ts.URL)
 	}
 
@@ -295,7 +294,7 @@ func TestRequestMethod(t *testing.T) {
 	req := NewRequest()
 	req.Method("POST")
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.Method, "POST")
+	utils.Equal(t, req.Context.Request.Method, "POST")
 }
 
 func TestRequestURL(t *testing.T) {
@@ -303,7 +302,7 @@ func TestRequestURL(t *testing.T) {
 	req := NewRequest()
 	req.URL(url)
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.URL.String(), url)
+	utils.Equal(t, req.Context.Request.URL.String(), url)
 }
 
 func TestRequestBaseURL(t *testing.T) {
@@ -311,7 +310,7 @@ func TestRequestBaseURL(t *testing.T) {
 	req := NewRequest()
 	req.BaseURL(url)
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.URL.String(), "http://foo.com")
+	utils.Equal(t, req.Context.Request.URL.String(), "http://foo.com")
 }
 
 func TestRequestPath(t *testing.T) {
@@ -321,7 +320,7 @@ func TestRequestPath(t *testing.T) {
 	req.URL(url)
 	req.Path(path)
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.URL.String(), "http://foo.com/foo/baz")
+	utils.Equal(t, req.Context.Request.URL.String(), "http://foo.com/foo/baz")
 }
 
 func TestRequestAddPath(t *testing.T) {
@@ -331,7 +330,7 @@ func TestRequestAddPath(t *testing.T) {
 	req.URL(url)
 	req.AddPath(path)
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.URL.String(), "http://foo.com/bar/baz/foo/baz")
+	utils.Equal(t, req.Context.Request.URL.String(), "http://foo.com/bar/baz/foo/baz")
 }
 
 func TestRequestPathParam(t *testing.T) {
@@ -343,7 +342,7 @@ func TestRequestPathParam(t *testing.T) {
 	req.Param("foo", "baz")
 	req.Param("baz", "foo")
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.URL.String(), "http://foo.com/baz/bar/foo")
+	utils.Equal(t, req.Context.Request.URL.String(), "http://foo.com/baz/bar/foo")
 }
 
 func TestRequestPathParams(t *testing.T) {
@@ -354,14 +353,14 @@ func TestRequestPathParams(t *testing.T) {
 	req.Path(path)
 	req.Params(map[string]string{"foo": "baz", "baz": "foo"})
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.URL.String(), "http://foo.com/baz/bar/foo")
+	utils.Equal(t, req.Context.Request.URL.String(), "http://foo.com/baz/bar/foo")
 }
 
 func TestRequestSetQuery(t *testing.T) {
 	req := NewRequest()
 	req.SetQuery("foo", "bar")
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.URL.RawQuery, "foo=bar")
+	utils.Equal(t, req.Context.Request.URL.RawQuery, "foo=bar")
 }
 
 func TestRequestAddQuery(t *testing.T) {
@@ -369,21 +368,21 @@ func TestRequestAddQuery(t *testing.T) {
 	req.AddQuery("foo", "bar")
 	req.AddQuery("foo", "bar")
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.URL.RawQuery, "foo=bar&foo=bar")
+	utils.Equal(t, req.Context.Request.URL.RawQuery, "foo=bar&foo=bar")
 }
 
 func TestRequestSetQueryParams(t *testing.T) {
 	req := NewRequest()
 	req.SetQueryParams(map[string]string{"foo": "bar"})
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.URL.RawQuery, "foo=bar")
+	utils.Equal(t, req.Context.Request.URL.RawQuery, "foo=bar")
 }
 
 func TestRequestSetHeader(t *testing.T) {
 	req := NewRequest()
 	req.SetHeader("foo", "bar")
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.Header.Get("foo"), "bar")
+	utils.Equal(t, req.Context.Request.Header.Get("foo"), "bar")
 }
 
 func TestRequestAddHeader(t *testing.T) {
@@ -391,15 +390,15 @@ func TestRequestAddHeader(t *testing.T) {
 	req.AddHeader("foo", "baz")
 	req.AddHeader("foo", "bar")
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.Header.Get("foo"), "baz")
+	utils.Equal(t, req.Context.Request.Header.Get("foo"), "baz")
 }
 
 func TestRequestSetHeaders(t *testing.T) {
 	req := NewRequest()
 	req.SetHeaders(map[string]string{"foo": "baz", "baz": "foo"})
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.Header.Get("foo"), "baz")
-	st.Expect(t, req.Context.Request.Header.Get("baz"), "foo")
+	utils.Equal(t, req.Context.Request.Header.Get("foo"), "baz")
+	utils.Equal(t, req.Context.Request.Header.Get("baz"), "foo")
 }
 
 func TestRequestAddCookie(t *testing.T) {
@@ -407,7 +406,7 @@ func TestRequestAddCookie(t *testing.T) {
 	cookie := &http.Cookie{Name: "foo", Value: "bar"}
 	req.AddCookie(cookie)
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.Header.Get("Cookie"), "foo=bar")
+	utils.Equal(t, req.Context.Request.Header.Get("Cookie"), "foo=bar")
 }
 
 func TestRequestAddCookies(t *testing.T) {
@@ -415,21 +414,21 @@ func TestRequestAddCookies(t *testing.T) {
 	cookies := []*http.Cookie{{Name: "foo", Value: "bar"}}
 	req.AddCookies(cookies)
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.Header.Get("Cookie"), "foo=bar")
+	utils.Equal(t, req.Context.Request.Header.Get("Cookie"), "foo=bar")
 }
 
 func TestRequestCookieJar(t *testing.T) {
 	req := NewRequest()
 	req.CookieJar()
 	req.Middleware.Run("request", req.Context)
-	st.Reject(t, req.Context.Client.Jar, nil)
+	utils.NotEqual(t, req.Context.Client.Jar, nil)
 }
 
 func TestRequestType(t *testing.T) {
 	req := NewRequest()
 	req.Type("json")
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, req.Context.Request.Header.Get("Content-Type"), "application/json")
+	utils.Equal(t, req.Context.Request.Header.Get("Content-Type"), "application/json")
 }
 
 func TestRequestBody(t *testing.T) {
@@ -437,30 +436,30 @@ func TestRequestBody(t *testing.T) {
 	req := NewRequest()
 	req.Body(reader)
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, int(req.Context.Request.ContentLength), 7)
-	st.Expect(t, req.Context.Request.Header.Get("Content-Type"), "")
+	utils.Equal(t, int(req.Context.Request.ContentLength), 7)
+	utils.Equal(t, req.Context.Request.Header.Get("Content-Type"), "")
 	body, _ := ioutil.ReadAll(req.Context.Request.Body)
-	st.Expect(t, string(body), "foo bar")
+	utils.Equal(t, string(body), "foo bar")
 }
 
 func TestRequestBodyString(t *testing.T) {
 	req := NewRequest()
 	req.BodyString("foo bar")
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, int(req.Context.Request.ContentLength), 7)
-	st.Expect(t, req.Context.Request.Header.Get("Content-Type"), "")
+	utils.Equal(t, int(req.Context.Request.ContentLength), 7)
+	utils.Equal(t, req.Context.Request.Header.Get("Content-Type"), "")
 	body, _ := ioutil.ReadAll(req.Context.Request.Body)
-	st.Expect(t, string(body), "foo bar")
+	utils.Equal(t, string(body), "foo bar")
 }
 
 func TestRequestJSON(t *testing.T) {
 	req := NewRequest()
 	req.JSON(map[string]string{"foo": "bar"})
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, int(req.Context.Request.ContentLength), 14)
-	st.Expect(t, req.Context.Request.Header.Get("Content-Type"), "application/json")
+	utils.Equal(t, int(req.Context.Request.ContentLength), 14)
+	utils.Equal(t, req.Context.Request.Header.Get("Content-Type"), "application/json")
 	body, _ := ioutil.ReadAll(req.Context.Request.Body)
-	st.Expect(t, string(body)[:13], `{"foo":"bar"}`)
+	utils.Equal(t, string(body)[:13], `{"foo":"bar"}`)
 }
 
 func TestRequestXML(t *testing.T) {
@@ -472,10 +471,10 @@ func TestRequestXML(t *testing.T) {
 	req := NewRequest()
 	req.XML(xml)
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, int(req.Context.Request.ContentLength), 50)
-	st.Expect(t, req.Context.Request.Header.Get("Content-Type"), "application/xml")
+	utils.Equal(t, int(req.Context.Request.ContentLength), 50)
+	utils.Equal(t, req.Context.Request.Header.Get("Content-Type"), "application/xml")
 	body, _ := ioutil.ReadAll(req.Context.Request.Body)
-	st.Expect(t, string(body), `<xmlTest><name><first>foo</first></name></xmlTest>`)
+	utils.Equal(t, string(body), `<xmlTest><name><first>foo</first></name></xmlTest>`)
 }
 
 func TestRequestForm(t *testing.T) {
@@ -492,10 +491,10 @@ func TestRequestForm(t *testing.T) {
 	req := NewRequest()
 	req.Form(data)
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, strings.Contains(req.Context.Request.Header.Get("Content-Type"), "multipart/form-data"), true)
+	utils.Equal(t, strings.Contains(req.Context.Request.Header.Get("Content-Type"), "multipart/form-data"), true)
 	body, _ := ioutil.ReadAll(req.Context.Request.Body)
-	st.Expect(t, strings.Contains(string(body), "data=bar"), true)
-	st.Expect(t, strings.Contains(string(body), "data=baz"), true)
+	utils.Equal(t, strings.Contains(string(body), "data=bar"), true)
+	utils.Equal(t, strings.Contains(string(body), "data=baz"), true)
 }
 
 func TestRequestFile(t *testing.T) {
@@ -503,9 +502,9 @@ func TestRequestFile(t *testing.T) {
 	req := NewRequest()
 	req.File("foo", reader)
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, strings.Contains(req.Context.Request.Header.Get("Content-Type"), "multipart/form-data"), true)
+	utils.Equal(t, strings.Contains(req.Context.Request.Header.Get("Content-Type"), "multipart/form-data"), true)
 	body, _ := ioutil.ReadAll(req.Context.Request.Body)
-	st.Expect(t, strings.Contains(string(body), "hello world"), true)
+	utils.Equal(t, strings.Contains(string(body), "hello world"), true)
 }
 
 func TestRequestFiles(t *testing.T) {
@@ -517,11 +516,11 @@ func TestRequestFiles(t *testing.T) {
 	req := NewRequest()
 	req.Files([]multipart.FormFile{file1, file2})
 	req.Middleware.Run("request", req.Context)
-	st.Expect(t, strings.Contains(req.Context.Request.Header.Get("Content-Type"), "multipart/form-data"), true)
+	utils.Equal(t, strings.Contains(req.Context.Request.Header.Get("Content-Type"), "multipart/form-data"), true)
 
 	body, _ := ioutil.ReadAll(req.Context.Request.Body)
-	st.Expect(t, strings.Contains(string(body), "content1"), true)
-	st.Expect(t, strings.Contains(string(body), "content2"), true)
+	utils.Equal(t, strings.Contains(string(body), "content1"), true)
+	utils.Equal(t, strings.Contains(string(body), "content2"), true)
 }
 
 func TestRequestClone(t *testing.T) {
@@ -529,9 +528,9 @@ func TestRequestClone(t *testing.T) {
 	req1.UseRequest(func(c *context.Context, h context.Handler) {})
 	req1.Context.Set("foo", "bar")
 	req2 := req1.Clone()
-	st.Expect(t, req1 != req2, true)
-	st.Expect(t, req2.Context.GetString("foo"), req1.Context.GetString("foo"))
-	st.Expect(t, len(req2.Middleware.GetStack()), 1)
+	utils.Equal(t, req1 != req2, true)
+	utils.Equal(t, req2.Context.GetString("foo"), req1.Context.GetString("foo"))
+	utils.Equal(t, len(req2.Middleware.GetStack()), 1)
 }
 
 func BenchmarkSimpleRequestGet(b *testing.B) {

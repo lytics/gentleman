@@ -5,8 +5,8 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/context"
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/utils"
 )
 
 func TestMatchMethod(t *testing.T) {
@@ -15,7 +15,7 @@ func TestMatchMethod(t *testing.T) {
 	ctx := context.New()
 	ctx.Request.Method = "GET"
 	mx.Run("request", ctx)
-	st.Expect(t, ctx.GetString("foo"), "bar")
+	utils.Equal(t, ctx.GetString("foo"), "bar")
 }
 
 func TestMatchPath(t *testing.T) {
@@ -296,8 +296,8 @@ func pass(ctx *context.Context, h context.Handler) {
 
 func match(t *testing.T, ctx *context.Context, shouldMatch bool) {
 	if shouldMatch {
-		st.Expect(t, ctx.GetString("foo"), "bar")
+		utils.Equal(t, ctx.GetString("foo"), "bar")
 	} else {
-		st.Expect(t, ctx.GetString("foo"), "")
+		utils.Equal(t, ctx.GetString("foo"), "")
 	}
 }

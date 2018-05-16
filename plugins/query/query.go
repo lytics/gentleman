@@ -1,8 +1,8 @@
 package query
 
 import (
-	c "gopkg.in/h2non/gentleman.v2/context"
-	p "gopkg.in/h2non/gentleman.v2/plugin"
+	c "github.com/lytics/gentleman/context"
+	p "github.com/lytics/gentleman/plugin"
 )
 
 // Set sets the query param key and value.

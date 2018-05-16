@@ -5,8 +5,8 @@ package middleware
 import (
 	"sync"
 
-	c "gopkg.in/h2non/gentleman.v2/context"
-	"gopkg.in/h2non/gentleman.v2/plugin"
+	c "github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/plugin"
 )
 
 // Middleware especifies the required interface that must be

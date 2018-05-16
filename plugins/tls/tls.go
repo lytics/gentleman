@@ -2,8 +2,8 @@ package tls
 
 import (
 	"crypto/tls"
-	c "gopkg.in/h2non/gentleman.v2/context"
-	p "gopkg.in/h2non/gentleman.v2/plugin"
+	c "github.com/lytics/gentleman/context"
+	p "github.com/lytics/gentleman/plugin"
 	"net/http"
 )
 

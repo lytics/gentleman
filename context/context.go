@@ -15,7 +15,7 @@ import (
 	"net/url"
 	"time"
 
-	"gopkg.in/h2non/gentleman.v2/utils"
+	"github.com/lytics/gentleman/utils"
 )
 
 // Key stores the key identifier for the built-in context

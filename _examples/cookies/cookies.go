@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"gopkg.in/h2non/gentleman.v2"
-	"gopkg.in/h2non/gentleman.v2/plugins/cookies"
+	"github.com/lytics/gentleman"
+	"github.com/lytics/gentleman/plugins/cookies"
 )
 
 func main() {

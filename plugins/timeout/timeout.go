@@ -1,9 +1,9 @@
 package timeout
 
 import (
-	g "gopkg.in/h2non/gentleman.v2"
-	c "gopkg.in/h2non/gentleman.v2/context"
-	p "gopkg.in/h2non/gentleman.v2/plugin"
+	g "github.com/lytics/gentleman"
+	c "github.com/lytics/gentleman/context"
+	p "github.com/lytics/gentleman/plugin"
 	"net"
 	"net/http"
 	"time"

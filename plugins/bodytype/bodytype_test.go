@@ -1,10 +1,11 @@
 package bodytype
 
 import (
-	"github.com/nbio/st"
-	"gopkg.in/h2non/gentleman.v2/context"
 	"net/http"
 	"testing"
+
+	"github.com/lytics/gentleman/context"
+	"github.com/lytics/gentleman/utils"
 )
 
 func TestBodyTypeDefine(t *testing.T) {
@@ -29,8 +30,8 @@ func TestBodyType(t *testing.T) {
 	ctx := context.New()
 	fn := newHandler()
 	Set("json").Exec("request", ctx, fn.fn)
-	st.Expect(t, fn.called, true)
-	st.Expect(t, ctx.Request.Header.Get("Content-Type"), "application/json")
+	utils.Equal(t, fn.called, true)
+	utils.Equal(t, ctx.Request.Header.Get("Content-Type"), "application/json")
 }
 
 type handler struct {

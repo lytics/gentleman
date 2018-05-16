@@ -3,7 +3,7 @@ package plugin
 import (
 	"testing"
 
-	"gopkg.in/h2non/gentleman.v2/context"
+	"github.com/lytics/gentleman/context"
 )
 
 func TestPluginLayer(t *testing.T) {
