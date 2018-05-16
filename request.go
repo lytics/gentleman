@@ -196,10 +196,10 @@ func (r *Request) AddCookies(data []*http.Cookie) *Request {
 }
 
 // CookieJar creates a cookie jar to store HTTP cookies when they are sent down.
-func (r *Request) CookieJar() *Request {
-	r.Use(cookies.Jar())
-	return r
-}
+// func (r *Request) CookieJar() *Request {
+// 	r.Use(cookies.Jar())
+// 	return r
+// }
 
 // Type defines the Content-Type header field based on the given type name alias or value.
 // You can use the following content type aliases: json, xml, form, html, text and urlencoded.

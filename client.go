@@ -167,10 +167,10 @@ func (c *Client) AddCookies(data []*http.Cookie) *Client {
 }
 
 // CookieJar creates a cookie jar to store HTTP cookies when they are sent down.
-func (c *Client) CookieJar() *Client {
-	c.Use(cookies.Jar())
-	return c
-}
+// func (c *Client) CookieJar() *Client {
+// 	c.Use(cookies.Jar())
+// 	return c
+// }
 
 // Use uses a new plugin to the middleware stack.
 func (c *Client) Use(p plugin.Plugin) *Client {
