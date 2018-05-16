@@ -14,7 +14,7 @@ import (
 
 const (
 	// RetryTimes defines the default max amount of times to retry a request.
-	RetryTimes = 5
+	RetryTimes = 3
 
 	// RetryWait defines the default amount of time to wait before each retry attempt.
 	RetryWait = 500 * time.Millisecond
