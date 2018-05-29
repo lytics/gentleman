@@ -53,3 +53,31 @@ func TestExponentialBackoff(t *testing.T) {
 		t.Error("incorrect value")
 	}
 }
+
+func TestLogarithmicBackoff(t *testing.T) {
+	b := LogarithmicBackoff(1, time.Second)
+	if len(b) != 1 {
+		t.Error("incorrect length")
+	}
+	if b[0] != time.Second {
+		t.Error("incorrect value")
+	}
+
+	b = LogarithmicBackoff(25, time.Second)
+	if len(b) != 25 {
+		t.Error("incorrect length")
+	}
+
+	if b[21] != 45*time.Second {
+		t.Error("incorrect value")
+	}
+	if b[22] != 48*time.Second {
+		t.Error("incorrect value")
+	}
+	if b[23] != 51*time.Second {
+		t.Error("incorrect value")
+	}
+	if b[24] != 54*time.Second {
+		t.Error("incorrect value")
+	}
+}
