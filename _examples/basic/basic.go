@@ -22,6 +22,15 @@ func main() {
 	// Set a new header field
 	req.SetHeader("Client", "gentleman")
 
+	// Get the wire representation of the request
+	b, err := req.Dump(true)
+	if err != nil {
+		fmt.Printf("Dump error: %s\n", err)
+		return
+	}
+	// dump the whole request as its HTTP/1.x wire representation
+	fmt.Printf("Request HTTP/1.x wire representation:\n%s\n", string(b))
+
 	// Perform the request
 	res, err := req.Send()
 	if err != nil {
@@ -33,6 +42,15 @@ func main() {
 		return
 	}
 
-	// Reads the whole body and returns it as string
-	fmt.Printf("Body: %s", res.String())
+	b, err = res.Dump(true)
+	if err != nil {
+		fmt.Printf("Dump error: %s\n", err)
+		return
+	}
+	// dump the whole response as its HTTP/1.x wire representation
+	fmt.Printf("Response HTTP/1.x wire representation:\n%s\n", string(b))
+
+	// Reads the whole request and returns it as string
+	fmt.Printf("Response: %s\n", res.String())
+
 }

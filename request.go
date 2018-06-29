@@ -5,6 +5,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"time"
 
@@ -324,4 +325,56 @@ func NewDefaultTransport(dialer *net.Dialer) *http.Transport {
 		TLSHandshakeTimeout: TLSHandshakeTimeout,
 	}
 	return transport
+}
+
+// Dump returns the given request in its HTTP/1.x wire
+// representation. The request is Cloned, middlewares set to run before
+// request and dial are run on the clone. The resulting request is
+// passed to httputils.DumpRequest for the HTTP1.x wire representation.
+//
+// If body is true, Dump also returns the body. If Dump returns an error,
+// the state of req is undefined.
+//
+// The documentation for httputils.DumpRequest details the returned
+// representation
+func (r *Request) Dump(body bool) ([]byte, error) {
+	tmp := r.Clone()
+	pipeline := []task{
+		func(ctx *context.Context) (*context.Context, bool) {
+			return tmp.run("request", ctx)
+		},
+		func(ctx *context.Context) (*context.Context, bool) {
+			return tmp.run("before dial", ctx)
+		},
+	}
+	// Reference to initial context
+	ctx := tmp.Context
+	// Execute tasks in order, stopping in case of error or explicit stop.
+	for _, task := range pipeline {
+		var stop bool
+		if ctx, stop = task(ctx); stop {
+			break
+		}
+	}
+	b, err := httputil.DumpRequest(ctx.Request, body)
+	return b, err
+}
+
+// run a middleware phase
+func (r *Request) run(phase string, ctx *context.Context) (*context.Context, bool) {
+	mw := r.Middleware
+
+	// Run the middleware by phase
+	ctx = mw.Run(phase, ctx)
+	if ctx.Error == nil {
+		return ctx, false
+	}
+
+	// Run error middleware
+	ctx = mw.Run("error", ctx)
+	if ctx.Error != nil {
+		return ctx, true
+	}
+
+	return ctx, false
 }
