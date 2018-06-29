@@ -50,7 +50,7 @@ func main() {
 	// dump the whole response as its HTTP/1.x wire representation
 	fmt.Printf("Response HTTP/1.x wire representation:\n%s\n", string(b))
 
-	// Reads the whole request and returns it as string
+	// Reads the whole response body and returns it as string
 	fmt.Printf("Response: %s\n", res.String())
 
 }

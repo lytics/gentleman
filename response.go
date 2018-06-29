@@ -246,10 +246,9 @@ func (r *Response) Clone() *Response {
 	return resp
 }
 
-// Dump returns the given response in its HTTP/1.x wire
-// representation. The response is Cloned, middlewares set to run before
-// response and dial are run on the clone. The resulting response is
-// passed to httputils.DumpResponse for the HTTP1.x wire representation.
+// Dump returns the given response in its HTTP/1.x wire representation.
+// The response is Cloned and the clone is passed to httputils.DumpResponse
+// for the HTTP1.x wire representation.
 //
 // If body is true, Dump also returns the body. If Dump returns an error,
 // the state of req is undefined.
