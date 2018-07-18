@@ -1,6 +1,7 @@
 package retry
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -18,7 +19,7 @@ func TestRetryRequest(t *testing.T) {
 	calls := 0
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		calls++
-		if calls < 3 {
+		if calls < RetryTimes {
 			w.WriteHeader(http.StatusServiceUnavailable)
 			return
 		}
@@ -30,7 +31,7 @@ func TestRetryRequest(t *testing.T) {
 	req := gentleman.NewRequest()
 	req.SetHeader("foo", "bar")
 	req.URL(ts.URL)
-	req.Use(New(nil))
+	req.Use(New(nil, nil))
 
 	res, err := req.Send()
 	utils.Equal(t, err, nil)
@@ -57,7 +58,7 @@ func TestRetryRequestWithPayload(t *testing.T) {
 	req.URL(ts.URL)
 	req.Method("POST")
 	req.BodyString("Hello, world")
-	req.Use(New(nil))
+	req.Use(New(nil, nil))
 
 	res, err := req.Send()
 	utils.Equal(t, err, nil)
@@ -78,7 +79,7 @@ func TestRetryServerError(t *testing.T) {
 
 	req := gentleman.NewRequest()
 	req.URL(ts.URL)
-	req.Use(New(nil))
+	req.Use(New(nil, nil))
 
 	res, err := req.Send()
 	utils.Equal(t, err, nil)
@@ -90,7 +91,7 @@ func TestRetryServerError(t *testing.T) {
 func TestRetryNetworkError(t *testing.T) {
 	req := gentleman.NewRequest()
 	req.URL("http://127.0.0.1:9123")
-	req.Use(New(nil))
+	req.Use(New(nil, nil))
 
 	res, err := req.Send()
 	utils.NotEqual(t, err, nil)
@@ -100,7 +101,7 @@ func TestRetryNetworkError(t *testing.T) {
 }
 
 // Timeout retry is not fully supported yet
-func testRetryNetworkTimeout(t *testing.T) {
+func TestRetryNetworkTimeout(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		time.Sleep(1 * time.Second)
 		w.WriteHeader(200)
@@ -110,11 +111,40 @@ func testRetryNetworkTimeout(t *testing.T) {
 	req := gentleman.NewRequest()
 	req.URL(ts.URL)
 	req.Use(timeout.Request(100 * time.Millisecond))
-	req.Use(New(nil))
+	req.Use(New(nil, nil))
 
 	res, err := req.Send()
 	utils.NotEqual(t, err, nil)
 	utils.Equal(t, strings.Contains(err.Error(), "request canceled"), true)
 	utils.Equal(t, res.Ok, false)
 	utils.Equal(t, res.StatusCode, 0)
+}
+
+func TestCustomEvaluator(t *testing.T) {
+	calls := 0
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if calls < 3 {
+			calls++
+			w.WriteHeader(418)
+			return
+		}
+		w.WriteHeader(200)
+	}))
+	defer ts.Close()
+
+	evaluator := func(err error, res *http.Response, req *http.Request) error {
+		if res.StatusCode == 418 {
+			return errors.New("you are not a teapot")
+		}
+		return nil
+	}
+
+	req := gentleman.NewRequest()
+	req.URL(ts.URL)
+	req.Use(New(nil, evaluator))
+
+	res, err := req.Send()
+	utils.Equal(t, nil, err)
+	utils.Equal(t, calls, RetryTimes)
+	utils.Equal(t, res.Ok, true)
 }
