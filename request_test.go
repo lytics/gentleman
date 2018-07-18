@@ -403,6 +403,15 @@ func TestRequestSetHeaders(t *testing.T) {
 	utils.Equal(t, req.Context.Request.Header.Get("baz"), "foo")
 }
 
+func TestRequestDelHeaders(t *testing.T) {
+	req := NewRequest()
+	req.SetHeaders(map[string]string{"foo": "baz", "baz": "foo"})
+	req.DelHeader("baz")
+	req.Middleware.Run("request", req.Context)
+	utils.Equal(t, req.Context.Request.Header.Get("foo"), "baz")
+	utils.Equal(t, req.Context.Request.Header.Get("baz"), "")
+}
+
 func TestRequestAddCookie(t *testing.T) {
 	req := NewRequest()
 	cookie := &http.Cookie{Name: "foo", Value: "bar"}

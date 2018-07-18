@@ -176,6 +176,12 @@ func (r *Request) AddHeader(name, value string) *Request {
 	return r
 }
 
+// DelHeader deletes a header field by its name
+func (r *Request) DelHeader(name string) *Request {
+	r.Use(headers.Del(name))
+	return r
+}
+
 // SetHeaders adds new header fields based on the given map.
 func (r *Request) SetHeaders(fields map[string]string) *Request {
 	r.Use(headers.SetMap(fields))
