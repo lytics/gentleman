@@ -58,9 +58,13 @@ var Evaluator = func(err error, res *http.Response, req *http.Request) error {
 }
 
 // New creates a new retry plugin based on the given retry strategy.
-func New(retrier Retrier) plugin.Plugin {
+func New(retrier Retrier, evaluator EvalFunc) plugin.Plugin {
 	if retrier == nil {
 		retrier = ConstantBackoff
+	}
+
+	if evaluator == nil {
+		evaluator = Evaluator
 	}
 
 	// Create retry new plugin
@@ -68,7 +72,7 @@ func New(retrier Retrier) plugin.Plugin {
 
 	// Attach the middleware handler for before dial phase
 	plu.SetHandler("before dial", func(ctx *context.Context, h context.Handler) {
-		InterceptTransport(ctx, retrier)
+		InterceptTransport(ctx, retrier, evaluator)
 		h.Next(ctx)
 	})
 
@@ -77,8 +81,8 @@ func New(retrier Retrier) plugin.Plugin {
 
 // InterceptTransport is a middleware function handler that intercepts
 // the HTTP transport based on the given HTTP retrier and context.
-func InterceptTransport(ctx *context.Context, retrier Retrier) error {
-	newTransport := &Transport{retrier, Evaluator, ctx.Client.Transport, ctx}
+func InterceptTransport(ctx *context.Context, retrier Retrier, evaluator EvalFunc) error {
+	newTransport := &Transport{retrier, evaluator, ctx.Client.Transport, ctx}
 	ctx.Client.Transport = newTransport
 	return nil
 }
