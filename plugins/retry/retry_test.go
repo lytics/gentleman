@@ -148,3 +148,46 @@ func TestCustomEvaluator(t *testing.T) {
 	utils.Equal(t, calls, RetryTimes)
 	utils.Equal(t, res.Ok, true)
 }
+
+func TestStackEvaluators(t *testing.T) {
+	calls := 1
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch calls {
+		case 1:
+			w.WriteHeader(418)
+		case 2:
+			w.WriteHeader(420)
+		case 3:
+			w.WriteHeader(200)
+		}
+		calls++
+	}))
+	defer ts.Close()
+
+	evaluations := 0
+	evaluator := func(err error, res *http.Response, req *http.Request) error {
+		evaluations++
+		if res.StatusCode == 418 {
+			return errors.New("you are not a teapot")
+		}
+		return nil
+	}
+	evaluator2 := func(err error, res *http.Response, req *http.Request) error {
+		evaluations++
+		if res.StatusCode == 420 {
+			return errors.New("enhance your calm")
+		}
+		return nil
+	}
+
+	req := gentleman.NewRequest()
+	req.URL(ts.URL)
+	req.Use(New(nil, evaluator2))
+	req.Use(New(nil, evaluator))
+
+	res, err := req.Send()
+	utils.Equal(t, nil, err)
+	utils.Equal(t, calls, RetryTimes+1)
+	utils.Equal(t, res.Ok, true)
+	utils.Equal(t, evaluations, 5)
+}
