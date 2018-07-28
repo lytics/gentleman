@@ -20,6 +20,15 @@ import (
 	"github.com/lytics/gentleman/utils"
 )
 
+var (
+	requestDump = `GET / HTTP/1.1
+Host: %s
+Content-Type: application/json
+User-Agent: gentleman/2.0.3
+
+{"foo": "bar", "id": 123}`
+)
+
 func TestRequest(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Hello, world")
@@ -41,6 +50,47 @@ func TestRequest(t *testing.T) {
 	utils.Equal(t, err, nil)
 	utils.NotEqual(t, res.RawRequest.URL, nil)
 	utils.Equal(t, res.StatusCode, 200)
+}
+
+func TestRequestString(t *testing.T) {
+	body := `{"foo": "bar", "id": 123}`
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		b, err := ioutil.ReadAll(r.Body)
+		utils.Equal(t, err, nil)
+		utils.Equal(t, fmt.Sprintf("%s", b), body)
+
+		fmt.Fprintln(w, "Hello, world")
+	}))
+	defer ts.Close()
+
+	req := NewRequest().URL(ts.URL).JSON(body)
+	utils.Equal(t, req.String(), body)
+	_, err := req.Send()
+	utils.Equal(t, err, nil)
+}
+
+func TestRequestDump(t *testing.T) {
+	body := `{"foo": "bar", "id": 123}`
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		b, err := ioutil.ReadAll(r.Body)
+		utils.Equal(t, err, nil)
+		utils.Equal(t, fmt.Sprintf("%s", b), body)
+
+		fmt.Fprintln(w, "Hello, world")
+	}))
+	defer ts.Close()
+
+	d := fmt.Sprintf(requestDump, ts.Listener.Addr().String())
+
+	req := NewRequest().URL(ts.URL).JSON(body)
+	dump, err := req.Dump()
+	utils.Equal(t, err, nil)
+	//go adds \r with each new lines apparently
+	dump = strings.Replace(dump, "\r", "", -1)
+
+	_, err = req.Send()
+	utils.Equal(t, err, nil)
+	utils.Equal(t, dump, d)
 }
 
 func TestRequestAlreadyDispatched(t *testing.T) {
