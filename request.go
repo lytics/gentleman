@@ -2,9 +2,12 @@ package gentleman
 
 import (
 	"errors"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"net"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"time"
 
@@ -319,6 +322,36 @@ func (r *Request) Clone() *Request {
 	req.Context = r.Context.Clone()
 	req.Middleware = r.Middleware.Clone()
 	return req
+}
+
+// String returns a string representation of a HTTP request body
+func (r *Request) String() string {
+	tmp := r.Clone()
+	tmp.dispatched = true
+	ctx := NewDispatcher(tmp).BuildFinalRequest()
+
+	s, err := ioutil.ReadAll(ctx.Request.Body)
+	if err != nil {
+		return err.Error()
+	}
+	defer ctx.Request.Body.Close()
+
+	return fmt.Sprintf("%s", s)
+}
+
+// Dump returns a plain text representation of a HTTP request
+func (r *Request) Dump() (string, error) {
+	tmp := r.Clone()
+	tmp.dispatched = true
+	ctx := NewDispatcher(tmp).BuildFinalRequest()
+
+	s, err := httputil.DumpRequest(ctx.Request, true)
+	if err != nil {
+		return "", err
+	}
+	defer ctx.Request.Body.Close()
+
+	return string(s), nil
 }
 
 // NewDefaultTransport returns a new http.Transport with default values

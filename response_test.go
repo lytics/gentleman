@@ -3,10 +3,20 @@ package gentleman
 import (
 	"errors"
 	"io/ioutil"
+	"net/http"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/lytics/gentleman/utils"
+)
+
+const (
+	responseDump = `HTTP/1.1 200 OK
+Content-Length: 7
+Foo: bar
+
+foo bar`
 )
 
 func TestResponseBuild(t *testing.T) {
@@ -177,6 +187,21 @@ func TestResponseString(t *testing.T) {
 	utils.Equal(t, body, "foo bar")
 }
 
+func TestResponseDump(t *testing.T) {
+	ctx := NewContext()
+	ctx.Response.StatusCode = 200
+	ctx.Response.Header.Set("foo", "bar")
+
+	utils.WriteBodyString(ctx.Response, "foo bar")
+	res, err := buildResponse(ctx)
+	utils.Equal(t, err, nil)
+	body, err := res.Dump()
+	utils.Equal(t, err, nil)
+	//go adds \r with each new lines apparently
+	body = strings.Replace(body, "\r", "", -1)
+	utils.Equal(t, body, responseDump)
+}
+
 func TestResponseStringError(t *testing.T) {
 	ctx := NewContext()
 	ctx.Error = errors.New("foo error")
@@ -245,4 +270,17 @@ func TestResponseReaderBufferError(t *testing.T) {
 	utils.Equal(t, res.buffer.Len(), 0)
 	res.ClearInternalBuffer()
 	utils.Equal(t, res.buffer.Len(), 0)
+}
+
+func TestIsChunkedResponse(t *testing.T) {
+	res := new(http.Response)
+	{
+		res.TransferEncoding = []string{"chunked", "identity"}
+		utils.Equal(t, isChunkedResponse(res), true)
+	}
+	{
+		res.TransferEncoding = []string{"gzip", "identity"}
+		utils.Equal(t, isChunkedResponse(res), false)
+
+	}
 }

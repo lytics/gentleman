@@ -7,8 +7,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"os"
 
 	"github.com/lytics/gentleman/context"
@@ -176,6 +178,22 @@ func (r *Response) String() string {
 
 	r.populateResponseByteBuffer()
 	return r.buffer.String()
+}
+
+// Dump returns a plain text representation of a HTTP response
+func (r *Response) Dump() (string, error) {
+	if r.Error != nil {
+		return "", r.Error
+	}
+
+	r.populateResponseByteBuffer()
+
+	s, err := httputil.DumpResponse(r.RawResponse, false)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s%s", s, r.buffer.String()), nil
 }
 
 // ClearInternalBuffer is a function that will clear the internal buffer that we
