@@ -594,6 +594,17 @@ func TestRequestClone(t *testing.T) {
 	utils.Equal(t, len(req2.Middleware.GetStack()), 1)
 }
 
+func TestRequestDump(t *testing.T) {
+	req := NewRequest()
+	req.BodyString("foo bar")
+	b, err := req.Dump(true)
+	utils.Equal(t, err, nil)
+	utils.Equal(t, b, []byte{71, 69, 84, 32, 47, 32, 72, 84, 84, 80, 47, 49, 46, 49,
+		13, 10, 85, 115, 101, 114, 45, 65, 103, 101, 110, 116, 58, 32, 103, 101, 110,
+		116, 108, 101, 109, 97, 110, 47, 50, 46, 48, 46, 51, 13, 10, 13, 10, 102, 111,
+		111, 32, 98, 97, 114})
+}
+
 func BenchmarkSimpleRequestGet(b *testing.B) {
 	ts := createEchoServer()
 	defer ts.Close()

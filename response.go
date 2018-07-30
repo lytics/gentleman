@@ -252,3 +252,27 @@ func isChunkedResponse(res *http.Response) bool {
 	}
 	return false
 }
+
+// Clone creates a new side-effects free response based on the current one.
+func (r *Response) Clone() *Response {
+	ctx := r.Context.Clone()
+	resp, err := buildResponse(ctx)
+	if err != nil {
+		return nil
+	}
+	return resp
+}
+
+// Dump returns the given response in its HTTP/1.x wire representation.
+// The response is Cloned and the clone is passed to httputils.DumpResponse
+// for the HTTP1.x wire representation.
+//
+// If body is true, Dump also returns the body. If Dump returns an error,
+// the state of req is undefined.
+//
+// The documentation for httputils.DumpResponse details the returned
+// representation
+func (r *Response) Dump(body bool) ([]byte, error) {
+	tmp := r.Clone()
+	return httputil.DumpResponse(tmp.RawResponse, body)
+}
